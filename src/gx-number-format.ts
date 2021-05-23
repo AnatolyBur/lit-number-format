@@ -51,7 +51,7 @@ export class GxNumberFormat extends LitElement {
   decimalScale: number | undefined;
 
   @property()
-  format: string | Function = '';
+  format: string | Function | null = null;
 
   @property()
   decimalSeparator: string = '.';
