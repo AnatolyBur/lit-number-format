@@ -1,0 +1,260 @@
+{
+  "version": "experimental",
+  "tags": [
+    {
+      "name": "gx-number-format",
+      "path": "./src/gx-number-format.ts",
+      "description": "An example element.",
+      "attributes": [
+        {
+          "name": "decimalScale",
+          "type": "number | undefined"
+        },
+        {
+          "name": "format",
+          "type": "string | Function",
+          "default": "\"\""
+        },
+        {
+          "name": "decimalSeparator",
+          "type": "string",
+          "default": "\".\""
+        },
+        {
+          "name": "thousandSeparator",
+          "type": "string | boolean",
+          "default": "true"
+        },
+        {
+          "name": "allowedDecimalSeparators",
+          "type": "string[]",
+          "default": "[]"
+        },
+        {
+          "name": "mask",
+          "type": "string | string[] | undefined"
+        },
+        {
+          "name": "suffix",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "prefix",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "fixedDecimalScale",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "allowNegative",
+          "type": "boolean",
+          "default": "true"
+        },
+        {
+          "name": "thousandsGroupStyle",
+          "type": "\"text\" | \"tel\" | \"password\" | \"thousand\"",
+          "default": "\"thousand\""
+        },
+        {
+          "name": "allowEmptyFormatting",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "isNumericString",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "isAllowed",
+          "type": "Function",
+          "default": "true"
+        },
+        {
+          "name": "focusTimeout",
+          "type": "Timeout | null"
+        },
+        {
+          "name": "allowLeadingZeros",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "type",
+          "type": "\"text\" | \"tel\" | \"password\"",
+          "default": "\"text\""
+        },
+        {
+          "name": "focusedElm",
+          "type": "HTMLElement | null | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResultGroup",
+          "default": "\"css`\\n    :host {\\n      display: inline-block;\\n    }\\n  `\""
+        },
+        {
+          "name": "decimalScale",
+          "attribute": "decimalScale",
+          "type": "number | undefined"
+        },
+        {
+          "name": "format",
+          "attribute": "format",
+          "type": "string | Function",
+          "default": "\"\""
+        },
+        {
+          "name": "decimalSeparator",
+          "attribute": "decimalSeparator",
+          "type": "string",
+          "default": "\".\""
+        },
+        {
+          "name": "thousandSeparator",
+          "attribute": "thousandSeparator",
+          "type": "string | boolean",
+          "default": "true"
+        },
+        {
+          "name": "allowedDecimalSeparators",
+          "attribute": "allowedDecimalSeparators",
+          "type": "string[]",
+          "default": "[]"
+        },
+        {
+          "name": "mask",
+          "attribute": "mask",
+          "type": "string | string[] | undefined"
+        },
+        {
+          "name": "suffix",
+          "attribute": "suffix",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "prefix",
+          "attribute": "prefix",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "fixedDecimalScale",
+          "attribute": "fixedDecimalScale",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "allowNegative",
+          "attribute": "allowNegative",
+          "type": "boolean",
+          "default": "true"
+        },
+        {
+          "name": "thousandsGroupStyle",
+          "attribute": "thousandsGroupStyle",
+          "type": "\"text\" | \"tel\" | \"password\" | \"thousand\"",
+          "default": "\"thousand\""
+        },
+        {
+          "name": "allowEmptyFormatting",
+          "attribute": "allowEmptyFormatting",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "value",
+          "type": "string | number",
+          "default": "\"\""
+        },
+        {
+          "name": "numAsString",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "mounted",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "isNumericString",
+          "attribute": "isNumericString",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "isAllowed",
+          "attribute": "isAllowed",
+          "type": "Function",
+          "default": "true"
+        },
+        {
+          "name": "focusTimeout",
+          "attribute": "focusTimeout",
+          "type": "Timeout | null"
+        },
+        {
+          "name": "allowLeadingZeros",
+          "attribute": "allowLeadingZeros",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "type",
+          "attribute": "type",
+          "type": "\"text\" | \"tel\" | \"password\"",
+          "default": "\"text\""
+        },
+        {
+          "name": "focusedElm",
+          "attribute": "focusedElm",
+          "type": "HTMLElement | null | undefined"
+        },
+        {
+          "name": "selectionBeforeInput",
+          "type": "{ selectionStart: number; selectionEnd: number; }",
+          "default": "{\"selectionStart\":0,\"selectionEnd\":0}"
+        },
+        {
+          "name": "onBlur",
+          "type": "(e: any) => void",
+          "default": "\"(e: any) => {\\n    const {\\n      format,\\n      // onBlur,\\n      allowLeadingZeros\\n    } = this;\\n    let { numAsString } = this;\\n    const lastValue = this.value;\\n    this.focusedElm = null;\\n\\n    if(this.focusTimeout) {\\n      clearTimeout(this.focusTimeout);\\n    }\\n\\n    if (!format) {\\n      // if the numAsString is not a valid number reset it to empty\\n      if (isNaN(parseFloat(numAsString))) {\\n        numAsString = '';\\n      }\\n\\n      if (!allowLeadingZeros) {\\n        numAsString = fixLeadingZero(numAsString);\\n      }\\n\\n      const formattedValue = this.formatNumString(numAsString);\\n\\n      //change the state\\n      if (formattedValue !== lastValue) {\\n        // the event needs to be persisted because its properties can be accessed in an asynchronous way\\n        this.updateValue({\\n          formattedValue,\\n          numAsString,\\n          input: e.target,\\n          setCaretPosition: false,\\n        });\\n        // onBlur(e);\\n        return;\\n      }\\n    }\\n    // onBlur(e);\\n  }\""
+        }
+      ],
+      "events": [
+        {
+          "name": "onValueChange"
+        },
+        {
+          "name": "onChange"
+        },
+        {
+          "name": "onMouseUp"
+        },
+        {
+          "name": "onFocus"
+        }
+      ],
+      "slots": [
+        {
+          "name": "",
+          "description": "This element has a slot"
+        }
+      ],
+      "cssParts": [
+        {
+          "name": "button",
+          "description": "The button"
+        }
+      ]
+    }
+  ]
+}
