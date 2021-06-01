@@ -25,7 +25,7 @@
     "serve": "wds --watch",
     "test": "wtr",
     "test:watch": "npm run test -- --watch",
-    "checksize": "rollup -c ; cat gx-number-format.bundled.js | gzip -9 | wc -c ; rm gx-number-format.bundled.js"
+    "checksize": "rollup -c ; cat build/gx-number-format.bundled.js | gzip -9 | wc -c ; rm build/gx-number-format.bundled.js"
   },
   "keywords": [
     "web-components",

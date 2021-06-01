@@ -1,19 +1,5 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-import {
-  LitElement,
-  html,
-  css
-} from 'lit';
-import {
-  customElement,
-  property,
-  state
-} from 'lit/decorators.js';
+import {LitElement, html, css} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
 
 import {
   charIsNumber,
@@ -46,10 +32,16 @@ export class GxNumberFormat extends LitElement {
       display: inline-block;
     }
   `;
-  //
+
+  /*
+   * If defined it limits to given decimal scale
+   */
   @property()
   decimalScale: number | undefined;
 
+  /*
+   * If format given as hash string allow number input inplace of hash. If format given as function, component calls the function with unformatted number and expects formatted number.
+   */
   @property()
   format: string | Function | null = null;
 
@@ -111,28 +103,28 @@ export class GxNumberFormat extends LitElement {
   focusedElm?: HTMLElement | undefined | null;
 
   selectionBeforeInput: {
-    selectionStart: number,
-    selectionEnd: number,
+    selectionStart: number;
+    selectionEnd: number;
   } = {
     selectionStart: 0,
     selectionEnd: 0,
   };
 
   getFormatString() {
-    if(typeof this.format === 'string') {
+    if (typeof this.format === 'string') {
       return this.format;
     }
     return '';
   }
 
   // connectedCallback() {
-    // this.mounted = true;
+  // this.mounted = true;
   // }
   //
   /** Misc methods **/
   getFloatString(num: string = '') {
-    const { decimalScale } = this;
-    const { decimalSeparator } = this.getSeparators();
+    const {decimalScale} = this;
+    const {decimalSeparator} = this.getSeparators();
     const numRegex = this.getNumberRegex(true);
 
     //remove negation for regex check
@@ -163,20 +155,23 @@ export class GxNumberFormat extends LitElement {
 
   //returned regex assumes decimalSeparator is as per prop
   getNumberRegex(g: boolean, ignoreDecimalSeparator?: boolean) {
-    const { format, decimalScale } = this;
-    const { decimalSeparator } = this.getSeparators();
+    const {format, decimalScale} = this;
+    const {decimalSeparator} = this.getSeparators();
     return new RegExp(
       '\\d' +
-        (decimalSeparator && decimalScale !== 0 && !ignoreDecimalSeparator && !format
+        (decimalSeparator &&
+        decimalScale !== 0 &&
+        !ignoreDecimalSeparator &&
+        !format
           ? '|' + escapeRegExp(decimalSeparator)
           : ''),
-      g ? 'g' : undefined,
+      g ? 'g' : undefined
     );
   }
 
   getSeparators() {
-    const { decimalSeparator } = this;
-    let { thousandSeparator, allowedDecimalSeparators } = this;
+    const {decimalSeparator} = this;
+    let {thousandSeparator, allowedDecimalSeparators} = this;
 
     if (thousandSeparator === true) {
       thousandSeparator = ',';
@@ -193,7 +188,7 @@ export class GxNumberFormat extends LitElement {
   }
 
   getMaskAtIndex(index: number) {
-    const { mask = ' ' } = this;
+    const {mask = ' '} = this;
     if (typeof mask === 'string') {
       return mask;
     }
@@ -212,7 +207,11 @@ export class GxNumberFormat extends LitElement {
   }
 
   /** caret specific methods **/
-  setPatchedCaretPosition(el: HTMLInputElement, caretPos: number, currentValue: string) {
+  setPatchedCaretPosition(
+    el: HTMLInputElement,
+    caretPos: number,
+    currentValue: string
+  ) {
     /* setting caret position within timeout of 0ms is required for mobile chrome,
     otherwise browser resets the caret position after we set it
     We are also setting it without timeout so that in normal browser we don't see the flickering */
@@ -224,7 +223,7 @@ export class GxNumberFormat extends LitElement {
 
   /* This keeps the caret within typing area so people can't type in between prefix or suffix */
   correctCaretPosition(value: string, caretPos: number, direction?: string) {
-    const { prefix, suffix, format } = this;
+    const {prefix, suffix, format} = this;
 
     //if value is empty return 0
     if (value === '') return 0;
@@ -235,7 +234,11 @@ export class GxNumberFormat extends LitElement {
     //in case of format as number limit between prefix and suffix
     if (!format) {
       const hasNegation = value[0] === '-';
-      return clamp(caretPos, prefix.length + (hasNegation ? 1 : 0), value.length - suffix.length);
+      return clamp(
+        caretPos,
+        prefix.length + (hasNegation ? 1 : 0),
+        value.length - suffix.length
+      );
     }
 
     //in case if custom format method don't do anything
@@ -280,14 +283,20 @@ export class GxNumberFormat extends LitElement {
     if (goToLeft) {
       //check if number should be taken after the bound or after it
       //if number preceding a valid number keep it after
-      return charIsNumber(value[caretLeftBound]) ? caretLeftBound + 1 : caretLeftBound;
+      return charIsNumber(value[caretLeftBound])
+        ? caretLeftBound + 1
+        : caretLeftBound;
     }
 
     return caretRightBound;
   }
 
-  getCaretPosition(inputValue: string, formattedValue: string, caretPos: number) {
-    const { format } = this;
+  getCaretPosition(
+    inputValue: string,
+    formattedValue: string,
+    caretPos: number
+  ) {
+    const {format} = this;
     const stateValue = this.value;
     const numRegex = this.getNumberRegex(true);
     const inputNumber = (inputValue.match(numRegex) || []).join('');
@@ -301,7 +310,10 @@ export class GxNumberFormat extends LitElement {
       const currentFormatChar = formattedValue[j] || '';
       //no need to increase new cursor position if formatted value does not have those characters
       //case inputValue = 1a23 and formattedValue =  123
-      if (!currentInputChar.match(numRegex) && currentInputChar !== currentFormatChar) {
+      if (
+        !currentInputChar.match(numRegex) &&
+        currentInputChar !== currentFormatChar
+      ) {
         continue;
       }
 
@@ -317,7 +329,10 @@ export class GxNumberFormat extends LitElement {
       }
 
       //we are not using currentFormatChar because j can change here
-      while (currentInputChar !== formattedValue[j] && j < formattedValue.length) {
+      while (
+        currentInputChar !== formattedValue[j] &&
+        j < formattedValue.length
+      ) {
         j++;
       }
       j++;
@@ -337,7 +352,7 @@ export class GxNumberFormat extends LitElement {
 
   /** methods to remove formattting **/
   removePrefixAndSuffix(val: string) {
-    const { format, prefix, suffix } = this;
+    const {format, prefix, suffix} = this;
 
     //remove prefix and suffix
     if (!format && val) {
@@ -347,12 +362,17 @@ export class GxNumberFormat extends LitElement {
       if (isNegative) val = val.substring(1, val.length);
 
       //remove prefix
-      val = prefix && val.indexOf(prefix) === 0 ? val.substring(prefix.length, val.length) : val;
+      val =
+        prefix && val.indexOf(prefix) === 0
+          ? val.substring(prefix.length, val.length)
+          : val;
 
       //remove suffix
       const suffixLastIndex = val.lastIndexOf(suffix);
       val =
-        suffix && suffixLastIndex !== -1 && suffixLastIndex === val.length - suffix.length
+        suffix &&
+        suffixLastIndex !== -1 &&
+        suffixLastIndex === val.length - suffix.length
           ? val.substring(0, suffixLastIndex)
           : val;
 
@@ -364,7 +384,7 @@ export class GxNumberFormat extends LitElement {
   }
 
   removePatternFormatting(val: string) {
-    const format = this.getFormatString()
+    const format = this.getFormatString();
     const formatArray = format.split('#').filter((str) => str !== '');
     let start = 0;
     let numStr = '';
@@ -392,7 +412,7 @@ export class GxNumberFormat extends LitElement {
   }
 
   removeFormatting(val: string) {
-    const { format, removeFormatting } = this;
+    const {format, removeFormatting} = this;
     if (!val) return val;
 
     if (!format) {
@@ -422,7 +442,8 @@ export class GxNumberFormat extends LitElement {
     const formattedNumberAry = format.split('');
     for (let i = 0, ln = format.length; i < ln; i++) {
       if (format[i] === '#') {
-        formattedNumberAry[i] = numStr[hashCount] || this.getMaskAtIndex(hashCount);
+        formattedNumberAry[i] =
+          numStr[hashCount] || this.getMaskAtIndex(hashCount);
         hashCount += 1;
       }
     }
@@ -441,18 +462,30 @@ export class GxNumberFormat extends LitElement {
       allowNegative,
       thousandsGroupStyle,
     } = this;
-    const { thousandSeparator, decimalSeparator } = this.getSeparators();
+    const {thousandSeparator, decimalSeparator} = this.getSeparators();
 
-    const hasDecimalSeparator = numStr.indexOf('.') !== -1 || (decimalScale && fixedDecimalScale);
-    let { beforeDecimal, afterDecimal, addNegation } = splitDecimal(numStr, allowNegative); // eslint-disable-line prefer-const
+    const hasDecimalSeparator =
+      numStr.indexOf('.') !== -1 || (decimalScale && fixedDecimalScale);
+    let {beforeDecimal, afterDecimal, addNegation} = splitDecimal(
+      numStr,
+      allowNegative
+    ); // eslint-disable-line prefer-const
 
     //apply decimal precision if its defined
     if (decimalScale !== undefined) {
-      afterDecimal = limitToScale(afterDecimal, decimalScale, fixedDecimalScale);
+      afterDecimal = limitToScale(
+        afterDecimal,
+        decimalScale,
+        fixedDecimalScale
+      );
     }
 
     if (thousandSeparator) {
-      beforeDecimal = applyThousandSeparator(beforeDecimal, thousandSeparator, thousandsGroupStyle);
+      beforeDecimal = applyThousandSeparator(
+        beforeDecimal,
+        thousandSeparator,
+        thousandsGroupStyle
+      );
     }
 
     //add prefix and suffix
@@ -462,13 +495,16 @@ export class GxNumberFormat extends LitElement {
     //restore negation sign
     if (addNegation) beforeDecimal = '-' + beforeDecimal;
 
-    numStr = beforeDecimal + ((hasDecimalSeparator && decimalSeparator) || '') + afterDecimal;
+    numStr =
+      beforeDecimal +
+      ((hasDecimalSeparator && decimalSeparator) || '') +
+      afterDecimal;
 
     return numStr;
   }
 
   formatNumString(numStr: string = '') {
-    const { format, allowEmptyFormatting } = this;
+    const {format, allowEmptyFormatting} = this;
     let formattedValue = numStr;
 
     if (numStr === '' && !allowEmptyFormatting) {
@@ -487,8 +523,9 @@ export class GxNumberFormat extends LitElement {
   }
 
   formatValueProp(defaultValue: string | number) {
-    const { format, decimalScale, fixedDecimalScale, allowEmptyFormatting } = this;
-    let { value, isNumericString } = this;
+    const {format, decimalScale, fixedDecimalScale, allowEmptyFormatting} =
+      this;
+    let {value, isNumericString} = this;
 
     // if value is undefined or null, use defaultValue instead
     value = isNil(value) ? defaultValue : value;
@@ -518,13 +555,15 @@ export class GxNumberFormat extends LitElement {
       value = roundToPrecision(value, decimalScale, fixedDecimalScale);
     }
 
-    const formattedValue = isNumericString ? this.formatNumString(value) : this.formatInput(value);
+    const formattedValue = isNumericString
+      ? this.formatNumString(value)
+      : this.formatInput(value);
 
     return formattedValue;
   }
 
   formatNegation(value: string = '') {
-    const { allowNegative } = this;
+    const {allowNegative} = this;
     const negationRegex = new RegExp('(-)');
     const doubleNegationRegex = new RegExp('(-)(.)*(-)');
 
@@ -545,7 +584,7 @@ export class GxNumberFormat extends LitElement {
   }
 
   formatInput(value: string = '') {
-    const { format } = this;
+    const {format} = this;
 
     //format negation only if we are formatting as number
     if (!format) {
@@ -560,8 +599,8 @@ export class GxNumberFormat extends LitElement {
 
   /*** format specific methods end ***/
   isCharacterAFormat(caretPos: number, value: string) {
-    const { format, prefix, suffix, decimalScale, fixedDecimalScale } = this;
-    const { decimalSeparator } = this.getSeparators();
+    const {format, prefix, suffix, decimalScale, fixedDecimalScale} = this;
+    const {decimalSeparator} = this.getSeparators();
 
     //check within format pattern
     if (typeof format === 'string' && format[caretPos] !== '#') return true;
@@ -571,7 +610,9 @@ export class GxNumberFormat extends LitElement {
       !format &&
       (caretPos < prefix.length ||
         caretPos >= value.length - suffix.length ||
-        (decimalScale && fixedDecimalScale && value[caretPos] === decimalSeparator))
+        (decimalScale &&
+          fixedDecimalScale &&
+          value[caretPos] === decimalSeparator))
     ) {
       return true;
     }
@@ -591,11 +632,11 @@ export class GxNumberFormat extends LitElement {
    * It will also work as fallback if android chrome keyDown handler does not work
    **/
   correctInputValue(caretPos: number, lastValue: string, value: string) {
-    const { format, allowNegative, prefix, suffix, decimalScale } = this;
-    const { allowedDecimalSeparators, decimalSeparator } = this.getSeparators();
+    const {format, allowNegative, prefix, suffix, decimalScale} = this;
+    const {allowedDecimalSeparators, decimalSeparator} = this.getSeparators();
     const lastNumStr = this.numAsString || '';
-    const { selectionStart, selectionEnd } = this.selectionBeforeInput;
-    const { start, end } = findChangedIndex(lastValue, value);
+    const {selectionStart, selectionEnd} = this.selectionBeforeInput;
+    const {start, end} = findChangedIndex(lastValue, value);
 
     /** Check for any allowed decimal separator is added in the numeric format and replace it with decimal separator */
     if (
@@ -605,7 +646,9 @@ export class GxNumberFormat extends LitElement {
     ) {
       const separator = decimalScale === 0 ? '' : decimalSeparator;
       return (
-        value.substr(0, selectionStart) + separator + value.substr(selectionStart + 1, value.length)
+        value.substr(0, selectionStart) +
+        separator +
+        value.substr(selectionStart + 1, value.length)
       );
     }
 
@@ -639,13 +682,14 @@ export class GxNumberFormat extends LitElement {
     //clear all numbers in such case while keeping the - sign
     if (!format) {
       const numericString = this.removeFormatting(value);
-      const { beforeDecimal, afterDecimal, addNegation } = splitDecimal(
+      const {beforeDecimal, afterDecimal, addNegation} = splitDecimal(
         numericString,
-        allowNegative,
+        allowNegative
       ); // eslint-disable-line prefer-const
 
       //clear only if something got deleted
-      const isBeforeDecimalPoint = caretPos < value.indexOf(decimalSeparator) + 1;
+      const isBeforeDecimalPoint =
+        caretPos < value.indexOf(decimalSeparator) + 1;
       if (
         numericString.length < lastNumStr.length &&
         isBeforeDecimalPoint &&
@@ -661,15 +705,15 @@ export class GxNumberFormat extends LitElement {
 
   /** Update value and caret position */
   updateValue(params: {
-    formattedValue: string,
-    numAsString?: string,
-    inputValue?: string,
-    input: HTMLInputElement,
-    caretPos?: number,
-    setCaretPosition?: Boolean,
+    formattedValue: string;
+    numAsString?: string;
+    inputValue?: string;
+    input: HTMLInputElement;
+    caretPos?: number;
+    setCaretPosition?: Boolean;
   }) {
-    const { formattedValue, input, setCaretPosition = true } = params;
-    let { numAsString, caretPos } = params;
+    const {formattedValue, input, setCaretPosition = true} = params;
+    let {numAsString, caretPos} = params;
     const lastValue = this.value;
 
     if (input) {
@@ -689,7 +733,11 @@ export class GxNumberFormat extends LitElement {
           input.value = String(formattedValue);
 
           //get the caret position
-          caretPos = this.getCaretPosition(inputValue, formattedValue, currentCaretPosition);
+          caretPos = this.getCaretPosition(
+            inputValue,
+            formattedValue,
+            currentCaretPosition
+          );
         }
 
         //set caret position
@@ -715,7 +763,7 @@ export class GxNumberFormat extends LitElement {
 
       // trigger onValueChange synchronously, so parent is updated along with the number format. Fix for #277, #287
       const event = new CustomEvent('onValueChange', {
-        detail: this.getValueObject(formattedValue, numAsString)
+        detail: this.getValueObject(formattedValue, numAsString),
       });
       this.dispatchEvent(event);
       // onValueChange(this.getValueObject(formattedValue, numAsString));
@@ -725,13 +773,16 @@ export class GxNumberFormat extends LitElement {
   onChange(e: any) {
     const el = e.target;
     let inputValue = el.value;
-    const { isAllowed } = this;
+    const {isAllowed} = this;
     const lastValue = this.value || '';
-
 
     const currentCaretPosition = getCurrentCaretPosition(el);
 
-    inputValue = this.correctInputValue(currentCaretPosition, String(lastValue), inputValue);
+    inputValue = this.correctInputValue(
+      currentCaretPosition,
+      String(lastValue),
+      inputValue
+    );
 
     let formattedValue = this.formatInput(inputValue) || '';
     const numAsString = this.removeFormatting(formattedValue);
@@ -743,11 +794,11 @@ export class GxNumberFormat extends LitElement {
       formattedValue = String(lastValue);
     }
 
-    this.updateValue({ formattedValue, numAsString, inputValue, input: el });
+    this.updateValue({formattedValue, numAsString, inputValue, input: el});
 
     if (isChangeAllowed) {
       const event = new CustomEvent('onChange', {
-        detail: e
+        detail: e,
       });
       this.dispatchEvent(event);
     }
@@ -757,13 +808,13 @@ export class GxNumberFormat extends LitElement {
     const {
       format,
       // onBlur,
-      allowLeadingZeros
+      allowLeadingZeros,
     } = this;
-    let { numAsString } = this;
+    let {numAsString} = this;
     const lastValue = this.value;
     this.focusedElm = null;
 
-    if(this.focusTimeout) {
+    if (this.focusTimeout) {
       clearTimeout(this.focusTimeout);
     }
 
@@ -793,16 +844,17 @@ export class GxNumberFormat extends LitElement {
       }
     }
     // onBlur(e);
-  }
+  };
 
   onKeyDown(e: any) {
     const el = e.target;
-    const { key } = e;
-    const { selectionStart, selectionEnd, value = '' } = el;
+    const {key} = e;
+    const {selectionStart, selectionEnd, value = ''} = el;
     let expectedCaretPosition;
-    const { decimalScale, fixedDecimalScale, prefix, suffix, onKeyDown } = this;
+    const {decimalScale, fixedDecimalScale, prefix, suffix, onKeyDown} = this;
     const format = this.getFormatString();
-    const ignoreDecimalSeparator = decimalScale !== undefined && fixedDecimalScale;
+    const ignoreDecimalSeparator =
+      decimalScale !== undefined && fixedDecimalScale;
     const numRegex = this.getNumberRegex(false, ignoreDecimalSeparator);
     const negativeRegex = new RegExp('-');
     const isPatternFormat = typeof format === 'string';
@@ -823,32 +875,51 @@ export class GxNumberFormat extends LitElement {
 
     //if expectedCaretPosition is not set it means we don't want to Handle keyDown
     //also if multiple characters are selected don't handle
-    if (expectedCaretPosition === undefined || selectionStart !== selectionEnd) {
+    if (
+      expectedCaretPosition === undefined ||
+      selectionStart !== selectionEnd
+    ) {
       onKeyDown(e);
       return;
     }
 
     let newCaretPosition = expectedCaretPosition;
     const leftBound = isPatternFormat ? format.indexOf('#') : prefix.length;
-    const rightBound = isPatternFormat ? format.lastIndexOf('#') + 1 : value.length - suffix.length;
+    const rightBound = isPatternFormat
+      ? format.lastIndexOf('#') + 1
+      : value.length - suffix.length;
 
     if (key === 'ArrowLeft' || key === 'ArrowRight') {
       const direction = key === 'ArrowLeft' ? 'left' : 'right';
-      newCaretPosition = this.correctCaretPosition(value, expectedCaretPosition, direction);
+      newCaretPosition = this.correctCaretPosition(
+        value,
+        expectedCaretPosition,
+        direction
+      );
     } else if (
       key === 'Delete' &&
       !numRegex.test(value[expectedCaretPosition]) &&
       !negativeRegex.test(value[expectedCaretPosition])
     ) {
-      while (!numRegex.test(value[newCaretPosition]) && newCaretPosition < rightBound) {
+      while (
+        !numRegex.test(value[newCaretPosition]) &&
+        newCaretPosition < rightBound
+      ) {
         newCaretPosition++;
       }
-    } else if (key === 'Backspace' && !numRegex.test(value[expectedCaretPosition])) {
+    } else if (
+      key === 'Backspace' &&
+      !numRegex.test(value[expectedCaretPosition])
+    ) {
       /* NOTE: This is special case when backspace is pressed on a
       negative value while the cursor position is after prefix. We can't handle it on onChange because
       we will not have any information of keyPress
       */
-      if (selectionStart <= leftBound + 1 && value[0] === '-' && typeof format === 'undefined') {
+      if (
+        selectionStart <= leftBound + 1 &&
+        value[0] === '-' &&
+        typeof format === 'undefined'
+      ) {
         const newValue = value.substring(1);
         this.updateValue({
           formattedValue: newValue,
@@ -856,10 +927,17 @@ export class GxNumberFormat extends LitElement {
           input: el,
         });
       } else if (!negativeRegex.test(value[expectedCaretPosition])) {
-        while (!numRegex.test(value[newCaretPosition - 1]) && newCaretPosition > leftBound) {
+        while (
+          !numRegex.test(value[newCaretPosition - 1]) &&
+          newCaretPosition > leftBound
+        ) {
           newCaretPosition--;
         }
-        newCaretPosition = this.correctCaretPosition(value, newCaretPosition, 'left');
+        newCaretPosition = this.correctCaretPosition(
+          value,
+          newCaretPosition,
+          'left'
+        );
       }
     }
 
@@ -889,7 +967,7 @@ export class GxNumberFormat extends LitElement {
      * NOTE: we have to give default value for value as in case when custom input is provided
      * value can come as undefined when nothing is provided on value prop.
      */
-    const { selectionStart, selectionEnd, value = '' } = el;
+    const {selectionStart, selectionEnd, value = ''} = el;
 
     if (selectionStart === selectionEnd) {
       const caretPosition = this.correctCaretPosition(value, selectionStart);
@@ -901,7 +979,7 @@ export class GxNumberFormat extends LitElement {
     // this.props.onMouseUp(e);
 
     const event = new CustomEvent('onMouseUp', {
-      detail: e
+      detail: e,
     });
     this.dispatchEvent(event);
   }
@@ -909,14 +987,14 @@ export class GxNumberFormat extends LitElement {
   onFocus(e: any) {
     // Workaround Chrome and Safari bug https://bugs.chromium.org/p/chromium/issues/detail?id=779328
     // (onFocus event target selectionStart is always 0 before setTimeout)
-    if(e.persist) {
+    if (e.persist) {
       e.persist();
     }
 
     this.focusedElm = e.target;
     this.focusTimeout = setTimeout(() => {
       const el = e.target;
-      const { selectionStart, selectionEnd, value = '' } = el;
+      const {selectionStart, selectionEnd, value = ''} = el;
 
       const caretPosition = this.correctCaretPosition(value, selectionStart);
 
@@ -929,14 +1007,13 @@ export class GxNumberFormat extends LitElement {
       }
 
       const event = new CustomEvent('onFocus', {
-        detail: e
+        detail: e,
       });
       this.dispatchEvent(event);
     }, 0);
   }
 
   render() {
-
     const {
       type,
       // displayType,
@@ -946,10 +1023,7 @@ export class GxNumberFormat extends LitElement {
       // format
     } = this;
     const format = this.getFormatString();
-    const {
-      value,
-      mounted
-    } = this;
+    const {value, mounted} = this;
 
     // add input mode on element based on format prop and device once the component is mounted
     const inputMode = mounted && addInputMode(format) ? 'numeric' : undefined;

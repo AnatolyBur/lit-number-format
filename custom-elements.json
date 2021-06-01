@@ -8,12 +8,13 @@
       "attributes": [
         {
           "name": "decimalScale",
+          "description": "If defined it limits to given decimal scale",
           "type": "number | undefined"
         },
         {
           "name": "format",
-          "type": "string | Function",
-          "default": "\"\""
+          "description": "If format given as hash string allow number input inplace of hash. If format given as function, component calls the function with unformatted number and expects formatted number.",
+          "type": "string | Function | null"
         },
         {
           "name": "decimalSeparator",
@@ -102,13 +103,14 @@
         {
           "name": "decimalScale",
           "attribute": "decimalScale",
+          "description": "If defined it limits to given decimal scale",
           "type": "number | undefined"
         },
         {
           "name": "format",
           "attribute": "format",
-          "type": "string | Function",
-          "default": "\"\""
+          "description": "If format given as hash string allow number input inplace of hash. If format given as function, component calls the function with unformatted number and expects formatted number.",
+          "type": "string | Function | null"
         },
         {
           "name": "decimalSeparator",
