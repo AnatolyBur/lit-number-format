@@ -49,6 +49,10 @@ values object is on following format
 
 Its recommended to use formattedValue / value / floatValue based on the initial state (it should be same as the initial state format) which you are passing as value prop. If you are saving the `value` key on state make sure to pass isNumericString prop to true.
 
+### Examples
+
+[Documentation and examples](https://anatolybur.github.io/lit-number-format/index.html)
+
 ### Notes and quirks
 
 1. Value can be passed as string or number, but if it is passed as string it should be either formatted value or if it is a numeric string, you have to set isNumericString props to true.
