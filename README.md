@@ -49,6 +49,10 @@ values object is on following format
 
 Its recommended to use formattedValue / value / floatValue based on the initial state (it should be same as the initial state format) which you are passing as value prop. If you are saving the `value` key on state make sure to pass isNumericString prop to true.
 
+### Examples
+
+[Documentation and examples](https://anatolybur.github.io/lit-number-format/index.html)
+
 ### Notes and quirks
 
 1. Value can be passed as string or number, but if it is passed as string it should be either formatted value or if it is a numeric string, you have to set isNumericString props to true.
@@ -64,10 +68,6 @@ Its recommended to use formattedValue / value / floatValue based on the initial 
 6. Its recommended to use formattedValue / value / floatValue based on the initial state (it should be same as the initial state format) which you are passing as value prop. If you are saving the `value` key on state make sure to pass isNumericString prop to true.
 
 7. onValueChange is not same as onChange. It gets called on whenever there is change in value which can be caused by any event like change or blur event or by a prop change. It no longer receives event object as second parameter.
-
-### Live Demo
-
-[http://codepen.io/s-yadav/pen/bpKNMa](http://codepen.io/s-yadav/pen/bpKNMa)
 
 ## Development
 
