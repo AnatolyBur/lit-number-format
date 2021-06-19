@@ -69,10 +69,6 @@ Its recommended to use formattedValue / value / floatValue based on the initial 
 
 7. onValueChange is not same as onChange. It gets called on whenever there is change in value which can be caused by any event like change or blur event or by a prop change. It no longer receives event object as second parameter.
 
-### Live Demo
-
-[http://codepen.io/s-yadav/pen/bpKNMa](http://codepen.io/s-yadav/pen/bpKNMa)
-
 ## Development
 
 ### Setup
